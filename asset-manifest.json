@@ -1,14 +1,14 @@
 {
-  "main.css": "/tennis/static/css/main.144d07ff.chunk.css",
-  "main.js": "/tennis/static/js/main.9893ee0c.chunk.js",
-  "main.js.map": "/tennis/static/js/main.9893ee0c.chunk.js.map",
-  "static/js/1.c561ecd5.chunk.js": "/tennis/static/js/1.c561ecd5.chunk.js",
-  "static/js/1.c561ecd5.chunk.js.map": "/tennis/static/js/1.c561ecd5.chunk.js.map",
+  "main.css": "/tennis/static/css/main.7e658163.chunk.css",
+  "main.js": "/tennis/static/js/main.58e848dc.chunk.js",
+  "main.js.map": "/tennis/static/js/main.58e848dc.chunk.js.map",
+  "static/js/1.4d57e920.chunk.js": "/tennis/static/js/1.4d57e920.chunk.js",
+  "static/js/1.4d57e920.chunk.js.map": "/tennis/static/js/1.4d57e920.chunk.js.map",
   "runtime~main.js": "/tennis/static/js/runtime~main.aed14b2d.js",
   "runtime~main.js.map": "/tennis/static/js/runtime~main.aed14b2d.js.map",
   "static/media/flags.css": "/tennis/static/media/flags.a3277783.png",
-  "static/css/main.144d07ff.chunk.css.map": "/tennis/static/css/main.144d07ff.chunk.css.map",
+  "static/css/main.7e658163.chunk.css.map": "/tennis/static/css/main.7e658163.chunk.css.map",
   "index.html": "/tennis/index.html",
-  "precache-manifest.b0d5ebb50dc18a46d65b9f41b39cc0c7.js": "/tennis/precache-manifest.b0d5ebb50dc18a46d65b9f41b39cc0c7.js",
+  "precache-manifest.e5daceaae8366979d137d0ff979d2ee7.js": "/tennis/precache-manifest.e5daceaae8366979d137d0ff979d2ee7.js",
   "service-worker.js": "/tennis/service-worker.js"
 }
