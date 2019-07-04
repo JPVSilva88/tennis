@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import './less/index.css';
 
-import atp from './atp.csv';
-import wta from './wta.csv';
 import data from './data.json';
 import test from './test.json';
-import Papa from 'papaparse';
 import Filter from "./Filter";
 import rounds from "./rounds.json"
 import CountrySelect from "./CountrySelect";
@@ -58,18 +55,29 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    const extra = {}
     const allCountries = []
     Object.keys(data).forEach((tour) => {
+      extra[tour] = {}
       Object.keys(data[tour]).forEach((tournament) => {
+        extra[tour][tournament] = {}
         Object.keys(data[tour][tournament]).forEach((year) => {
+          extra[tour][tournament][year] = {}
           Object.keys(data[tour][tournament][year]).forEach((round) => {
+            extra[tour][tournament][year][round] = {}
             data[tour][tournament][year][round].forEach((country) => {
+              let c = extra[tour][tournament][year][round][country]
+              if(c) {
+                extra[tour][tournament][year][round][country]++
+              } else {
+                extra[tour][tournament][year][round][country] = 1
+              }
+
               const countryObj = allCountries.find((c) => c.code === country)
               if (!countryObj) {
                 allCountries.push({
                   code: country,
-                  name: i18nCountries.getName(country, "en") || i18nCountries.getName(i18nMapping[country], "en") || "",
-                  count: 1
+                  name: i18nCountries.getName(country, "en") || i18nCountries.getName(i18nMapping[country], "en") || ""
                 })
               } else {
                 countryObj.count++
@@ -79,6 +87,17 @@ class App extends Component {
         })
       })
     })
+
+    Object.keys(test).forEach((tour) => {
+      Object.keys(test[tour]).forEach((tournament) => {
+        extra[tour][tournament][2019] = {}
+          Object.keys(test[tour][tournament][2019]).forEach((round) => {
+            extra[tour][tournament][2019][round] = test[tour][tournament][2019][round]
+          })
+      })
+    })
+
+    console.info(extra)
 
     this.state = {
       tournament: "Wimbledon",
@@ -90,7 +109,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-      //this.fetchCsv();
+    
   }
 
   componentDidMount() {
@@ -140,106 +159,6 @@ class App extends Component {
     }
 
     return new Array(Math.ceil(max / 10) + 1).fill(undefined).map((v, i) => i * 10)
-  }
-
-  // MIGHT NOT NEED
-  getTournament(tournament) {
-    switch(tournament) {
-      case "Australian Championships":
-        return "Australian Open"
-      case "Australian Chps.":
-          return "Australian Open"
-      case "Us Open":
-        return "US Open"
-      case "French Open":
-        return "Roland Garros"
-      default:
-        return tournament
-    }
-  }
-
-  // MIGHT NOT NEED
-  fetchCsv() {
-    const allCountries = []
-    
-    return fetch(atp).then((response) => {
-        let reader = response.body.getReader();
-        let decoder = new TextDecoder('utf-8');
-
-        let text = ""
-
-        const func = (result) => {
-          text += decoder.decode(result.value)
-        }
-
-        const keepGoing = (result) => {
-          func(result)
-          if(result.done) {
-            Papa.parse(text, {
-                complete: (res) => {
-                  const newOrg = {}
-                  const newData = res.data.filter((r) => {
-                    return r[4] === "G"
-                  }).map((r) => {
-                    const year = parseInt(r[0].substr(0,4))
-                    return {
-                      year: r[0].substr(0,4),
-                      tournament: this.getTournament(r[1]),
-                      round: year === 1968 ? r[29] : r[25],
-                      country: r[13],
-                      country2: year === 1968 ? r[23] : r[21]
-                    }
-                  }).forEach((r) => {
-                    if(!newOrg[r.tournament]) newOrg[r.tournament] = {}
-                    if(!newOrg[r.tournament][r.year]) newOrg[r.tournament][r.year] = {}
-                    if(!newOrg[r.tournament][r.year][r.round]) newOrg[r.tournament][r.year][r.round] = []
-
-                    newOrg[r.tournament][r.year][r.round].push(r.country2)
-                    newOrg[r.tournament][r.year][r.round].push(r.country)
-                    const country = allCountries.find((c) => c.code === r.country)
-                    if (!country) {
-                      allCountries.push({
-                        code: r.country,
-                        name: i18nCountries.getName(r.country, "en"),
-                        count: 1
-                      })
-                    } else {
-                      country.count++
-                    }
-                    const country2 = allCountries.find((c) => c.code === r.country2)
-                    if (!country2) {
-                      allCountries.push({
-                        code: r.country2,
-                        name: i18nCountries.getName(r.country2, "en"),
-                        count: 1
-                      })
-                    } else {
-                      country2.count++
-                    }
-
-                    if(r.round === "F") {
-                      newOrg[r.tournament][r.year].W = [r.country]
-                    }
-                  })
-                  newOrg["Australian Open"][1979] = {}
-                  newOrg["Australian Open"][1986] = {}
-                  console.info(JSON.stringify(newOrg))
-                  //console.info(newOrg)
-                  this.setState({
-                    data: newOrg,
-                    allCountries
-                  })
-                  this.calculateChart(newOrg)
-                }
-            });
-            return
-          }
-
-          return reader.read().then((val) => {keepGoing(val, this)})
-        }
-
-        return reader.read().then((result) => keepGoing(result));
-    });
   }
 
   handleChange(key, value) {
