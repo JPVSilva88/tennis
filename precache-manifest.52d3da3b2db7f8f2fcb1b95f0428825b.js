@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/tennis/static/css/main.ec672d02.chunk.css"
   },
   {
-    "revision": "0bcc16bc5c34828dcf4eb5607cae898a",
+    "revision": "e2a444fb9cabdb1c1f007ce9895983ef",
     "url": "/tennis/index.html"
   }
 ];
