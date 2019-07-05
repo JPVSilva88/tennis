@@ -4,22 +4,24 @@ import './less/index.css';
 
 class CountrySelect extends PureComponent {
   render() {
-    const {options, onSelected} = this.props
+    const {options, onSelected, disabled} = this.props
     return (
       <div className="country-input">
         <Select
             id="select"
             options={options}
+            isDisabled={disabled}
             value={null}
             getOptionValue={(c) => c.code}
             getOptionLabel={(c) => c.name}
             styles={{
-              control: (styles) => ({
+              control: (styles, state) => ({
                 ...styles,
                 border: 0,
                 borderRadius: 0,
                 minHeight: 0,
-                backgroundColor: "#616170"
+                backgroundColor: "#616170",
+                opacity: state.isDisabled ? 0.5 : 1
               }),
               input: (styles) => ({
                 ...styles,

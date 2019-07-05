@@ -35,7 +35,7 @@ class CountrySelect extends Component {
   }
 
   render() {
-    const {chartData, countries, i18nMapping, yTicks} = this.props
+    const {chartData, countries, getCountryName, yTicks} = this.props
     return (
       <div className="chart">
         <ResponsiveContainer width="95%" height={400}>
@@ -55,13 +55,13 @@ class CountrySelect extends Component {
               onMouseEnter={this.handleMouseEnter}
               onMouseLeave={this.handleMouseLeave} />
             {countries.map((l, i) => {
-              const key = i18nCountries.getName(l, "en") || i18nCountries.getName(i18nMapping[l], "en") || l
+              const key = getCountryName(l)
               const {hover} = this.state
                 return <Line
                   type="monotone"
-                  dot={{ fill: "#2b2b35", strokeWidth: 1 }}
+                  dot={{ fill: "#2b2b35", strokeWidth: 1, r: hover === key ? 4 : 3}}
                   strokeOpacity={!hover || hover === key ? 1 : 0.5}
-                  strokeWidth={hover === key ? 2 : 1}
+                  strokeWidth={hover === key ? 3 : 2}
                   stroke={COLORS[i]}
                   dataKey={key}
                   activeDot={{ strokeWidth: 1, r: 5 }} />

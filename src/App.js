@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import './less/index.css';
 
 import data from './data.json';
+import dataFull from './dataFull.json';
 import test from './test.json';
 import Filter from "./Filter";
 import rounds from "./rounds.json"
+import tours from "./tours.json"
 import CountrySelect from "./CountrySelect";
 import Chart from "./Chart";
 import './flags.css';
@@ -49,6 +52,10 @@ const i18nMapping = {
   IRI: "IRN"
 }
 
+const countryNames = {
+  RUS: "Russia"
+}
+
 const ALL_TOURNAMENTS = ["Australian Open", "Roland Garros", "Wimbledon", "US Open"]
 
 class App extends Component {
@@ -75,12 +82,13 @@ class App extends Component {
 
               const countryObj = allCountries.find((c) => c.code === country)
               if (!countryObj) {
-                allCountries.push({
-                  code: country,
-                  name: i18nCountries.getName(country, "en") || i18nCountries.getName(i18nMapping[country], "en") || ""
-                })
-              } else {
-                countryObj.count++
+                const name = this.getCountryName(country)
+                if(name) {
+                  allCountries.push({
+                    code: country,
+                    name
+                  })
+                }
               }
             })
           })
@@ -93,17 +101,29 @@ class App extends Component {
         extra[tour][tournament][2019] = {}
           Object.keys(test[tour][tournament][2019]).forEach((round) => {
             extra[tour][tournament][2019][round] = test[tour][tournament][2019][round]
+            Object.keys(test[tour][tournament][2019][round]).map((country) => {
+              const countryObj = allCountries.find((c) => c.code === country)
+              if (!countryObj) {
+                const name = this.getCountryName(country)
+                if(name) {
+                  allCountries.push({
+                    code: country,
+                    name
+                  })
+                }
+              }
+            })
           })
       })
     })
 
-    console.info(extra)
+    //console.info(JSON.stringify(extra))
 
     this.state = {
       tournament: "Wimbledon",
-      countries: ["GBR"],
-      round: "R16",
-      tour: "ATP",
+      countries: ["CHN", "RUS"],
+      round: "R32",
+      tour: "WTA",
       allCountries: allCountries.sort((a,b) => a.name.localeCompare(b.name))
     }
   }
@@ -116,6 +136,10 @@ class App extends Component {
     this.calculateChart()
   }
 
+  getCountryName(country) {
+    return countryNames[country] || i18nCountries.getName(country, "en") || i18nCountries.getName(i18nMapping[country], "en")
+  }
+
   calculateChart() {
     const {tournament, tour, countries, round} = this.state
 
@@ -126,15 +150,15 @@ class App extends Component {
 
     let max = 0
 
-    if(!data[tour][tournament]) return
+    if(!dataFull[tour][tournament]) return
 
-    Object.keys(data[tour][tournament]).forEach((year) => {
-      if(!data[tour][tournament][year][round]) return
-      const countryCount = this.countCountries(data[tour][tournament][year][round])
+    Object.keys(dataFull[tour][tournament]).forEach((year) => {
+      if(!dataFull[tour][tournament][year][round]) return
+      const countryCount = dataFull[tour][tournament][year][round]
       countries.forEach((c) => {
         const val = countryCount[c] || 0
         max = Math.max(max, val)
-        const country = i18nCountries.getName(c, "en") || i18nCountries.getName(i18nMapping[c], "en") || c
+        const country = this.getCountryName(c)
         chartData[year - 1968][country] = val
       })
     })
@@ -162,6 +186,11 @@ class App extends Component {
   }
 
   handleChange(key, value) {
+    ReactGA.event({
+      category: "filter",
+      action: "changed",
+      label: key
+    })
     this.setState({
       [key]: value
     }, () => {
@@ -205,19 +234,20 @@ class App extends Component {
       <div className="App">
         <div className="filters">
           <Filter
-            title="Tour"
+            title="Pick a Tour"
             itemClass="tour"
-            options={["WTA", "ATP"]}
+            options={tours}
             onSelected={(newValue) => this.handleChange("tour", newValue)}
             selectedValue={tour} />
           <Filter
-            title="Tournament"
+            title="Pick a Tournament"
             itemClass="tournament"
             options={ALL_TOURNAMENTS}
             onSelected={(newValue) => this.handleChange("tournament", newValue)}
             selectedValue={tournament} />
-          Countries
+          Choose the Countries
           <CountrySelect
+            disabled={countries.length >= 5}
             options={notSelectedCountries}
             onSelected={this.toggleCountry.bind(this)} />
           <div className="menu countries">
@@ -233,21 +263,31 @@ class App extends Component {
                   </div>
                 </div>
             })}
-            <div className="item empty">Add more countries</div>
-            <div className="item empty">Add more countries</div>
-            <div className="item empty">Add more countries</div>
-            <div className="item empty">Add more countries</div>
-            <div className="item empty">Add more countries</div>
+            <div className="item empty">Add up to 5 countries</div>
+            <div className="item empty">Add up to 5 countries</div>
+            <div className="item empty">Add up to 5 countries</div>
+            <div className="item empty">Add up to 5 countries</div>
+            <div className="item empty">Add up to 5 countries</div>
           </div>
           <Filter
-            title="Round"
+            title="Pick a Round"
             itemClass="round"
             options={rounds}
             onSelected={(newValue) => this.handleChange("round", newValue)}
             selectedValue={round} />
         </div>
-        {this.state.chartData && 
-          <Chart chartData={this.state.chartData} countries={countries} i18nMapping={i18nMapping} yTicks={yTicks} />}
+        <div className="main">
+          <div className="title">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <span>Grand Slam Stats</span>
+            </div>
+          {this.state.chartData && 
+            <Chart chartData={this.state.chartData} countries={countries} getCountryName={this.getCountryName} yTicks={yTicks} />}
+        </div>
       </div>
     );
   }
