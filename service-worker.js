@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/tennis/precache-manifest.5f4e06f15a327e349379cdb135ba9fbd.js"
+  "/tennis/precache-manifest.8ed34716d1deafe37bd00d3a27db4a12.js"
 );
 
 workbox.clientsClaim();
