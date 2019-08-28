@@ -8,19 +8,19 @@ self.__precacheManifest = [
     "url": "/tennis/static/js/runtime~main.aed14b2d.js"
   },
   {
-    "revision": "4181c3f00a4a226d17d7",
-    "url": "/tennis/static/js/main.4181c3f0.chunk.js"
+    "revision": "f0cd21af048f83300a8a",
+    "url": "/tennis/static/js/main.f0cd21af.chunk.js"
   },
   {
     "revision": "4e16fb8563bd17834998",
     "url": "/tennis/static/js/1.4e16fb85.chunk.js"
   },
   {
-    "revision": "4181c3f00a4a226d17d7",
+    "revision": "f0cd21af048f83300a8a",
     "url": "/tennis/static/css/main.ec672d02.chunk.css"
   },
   {
-    "revision": "43dc38dc6b17087c6f212ba343d5683d",
+    "revision": "c52ea8a9845dea09c6742ba9234cf0a8",
     "url": "/tennis/index.html"
   }
 ];
